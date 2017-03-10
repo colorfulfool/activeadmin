@@ -8,9 +8,14 @@ RSpec.describe "#pretty_format" do
     mock_action_view.send *args, &block
   end
 
-  {String: 'hello', Fixnum: 23, Float: 5.67, Bignum: 10**30, Symbol: :foo,
-    'Arbre::Element' => Arbre::Element.new.br(:foo)
-  }.each do |klass, obj|
+  [
+    [:String, 'hello'],
+    [:Fixnum, 23],
+    [:Float, 5.67],
+    [:Bignum, 10**30],
+    [:Symbol, :foo],
+    ['Arbre::Element', Arbre::Element.new.br(:foo)]
+  ].each do |klass, obj|
     it "should call `to_s` on #{klass}s" do
       expect(obj).to be_a klass.to_s.constantize # safeguard for Bignum
       expect(pretty_format(obj)).to eq obj.to_s
