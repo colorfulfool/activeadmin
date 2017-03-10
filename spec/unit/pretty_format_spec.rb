@@ -8,14 +8,20 @@ RSpec.describe "#pretty_format" do
     mock_action_view.send *args, &block
   end
 
-  [
+  klass_obj_map = [
     [:String, 'hello'],
-    [:Fixnum, 23],
     [:Float, 5.67],
-    [:Bignum, 10**30],
     [:Symbol, :foo],
     ['Arbre::Element', Arbre::Element.new.br(:foo)]
-  ].each do |klass, obj|
+  ]
+
+  klass_obj_map += if RUBY_VERSION >= '2.4.0'
+                     [[:Integer, 23], [:Integer, 10**30]]
+                   else
+                     [[:Fixnum, 23], [:Bignum, 10**30]]
+                   end
+
+  klass_obj_map.each do |klass, obj|
     it "should call `to_s` on #{klass}s" do
       expect(obj).to be_a klass.to_s.constantize # safeguard for Bignum
       expect(pretty_format(obj)).to eq obj.to_s
